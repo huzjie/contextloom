@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: contextloom
+  namespace: contextloom
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: contextloom
+  template:
+    metadata:
+      labels:
+        app: contextloom
+    spec:
+      containers:
+        - name: contextloom
+          image: contextloom:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: contextloom-config
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 15

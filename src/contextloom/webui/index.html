@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ContextLoom 控制台</title>
+<style>
+:root { --brand:#e60012; --bg:#fafafa; --card:#fff; --text:#1a1a1a; --muted:#888; }
+* { box-sizing:border-box; }
+body { margin:0; font-family:-apple-system,"Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); }
+header { background:var(--brand); color:#fff; padding:16px 24px; }
+header h1 { margin:0; font-size:20px; }
+main { max-width:960px; margin:24px auto; padding:0 16px; }
+.card { background:var(--card); border:1px solid #eee; border-radius:8px; padding:20px; margin-bottom:16px; }
+label { display:block; font-weight:600; margin:8px 0 4px; }
+input,textarea,select { width:100%; padding:10px; border:1px solid #ddd; border-radius:6px; font-size:14px; }
+textarea { min-height:90px; }
+button { background:var(--brand); color:#fff; border:0; padding:12px 20px; border-radius:6px; font-size:15px; cursor:pointer; margin-top:12px; }
+button:hover { opacity:.9; }
+#answer { white-space:pre-wrap; line-height:1.7; background:#f7f7f7; border-radius:6px; padding:14px; min-height:60px; }
+.meta { color:var(--muted); font-size:12px; margin-top:8px; }
+</style>
+</head>
+<body>
+<header><h1>ContextLoom 🧶 端侧百万上下文文档智能平台</h1></header>
+<main>
+  <div class="card">
+    <h2>摄入文档</h2>
+    <label>来源（文件路径 / 目录 / URL）</label>
+    <input id="src" placeholder="如 docs/demo/售后手册.md">
+    <label>知识库</label>
+    <input id="ingest-col" value="default">
+    <button onclick="doIngest()">建立索引</button>
+    <div id="ingest-msg" class="meta"></div>
+  </div>
+  <div class="card">
+    <h2>提问</h2>
+    <label>问题</label>
+    <textarea id="q" placeholder="如：购买 10 天后设备故障且用过第三方耗材，能否换货？"></textarea>
+    <label>知识库</label>
+    <input id="ask-col" value="default">
+    <button onclick="doAsk()">提交</button>
+    <div id="answer"></div>
+    <div id="ask-meta" class="meta"></div>
+  </div>
+</main>
+<script>
+async function doIngest(){
+  const msg=document.getElementById('ingest-msg');
+  msg.textContent='摄入中…';
+  const r=await fetch('/documents/ingest',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({source:document.getElementById('src').value,
+    collection:document.getElementById('ingest-col').value})});
+  const j=await r.json();
+  msg.textContent= r.ok ? `✅ ${j.title} → ${j.chunks} 分块` : '❌ '+JSON.stringify(j);
+}
+async function doAsk(){
+  const ans=document.getElementById('answer');
+  const meta=document.getElementById('ask-meta');
+  ans.textContent='推理中…';
+  const r=await fetch('/queries/ask',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({question:document.getElementById('q').value,
+    collection:document.getElementById('ask-col').value})});
+  const j=await r.json();
+  ans.textContent=j.answer||JSON.stringify(j);
+  meta.textContent=`后端 ${j.backend}/${j.model} · ${j.elapsed_ms}ms · ${(j.sources||[]).length} 来源`;
+}
+</script>
+</body>
+</html>

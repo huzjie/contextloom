@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: contextloom-config
+  namespace: contextloom
+data:
+  CLOOM_LLM_BACKEND: "ollama"
+  CLOOM_LLM_BASE_URL: "http://ollama:11434"
+  CLOOM_LLM_MODEL: "qwen3:8b"
+  CLOOM_VECTOR_BACKEND: "sqlite"

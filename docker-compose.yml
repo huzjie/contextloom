@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  contextloom:
+    build: .
+    image: contextloom:latest
+    container_name: contextloom
+    ports:
+      - "8000:8000"
+    environment:
+      CLOOM_ENV: prod
+      CLOOM_LLM_BACKEND: ollama
+      CLOOM_LLM_BASE_URL: http://ollama:11434
+      CLOOM_LLM_MODEL: qwen3:8b
+      CLOOM_VECTOR_BACKEND: sqlite
+    volumes:
+      - ./data:/app/data
+    depends_on:
+      - ollama
+    restart: unless-stopped
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: contextloom-ollama
+    volumes:
+      - ollama_models:/root/.ollama
+    ports:
+      - "11434:11434"
+    restart: unless-stopped
+
+volumes:
+  ollama_models:

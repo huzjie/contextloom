@@ -1,0 +1,76 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "contextloom"
+version = "0.1.0"
+description = "ContextLoom - 端侧百万上下文文档智能平台 (On-device long-context document intelligence)"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "AI Daily Agent" }]
+keywords = ["long-context", "llm", "rag", "on-device", "local-llm", "ollama", "vllm", "million-token"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.29",
+    "pydantic>=2.6",
+    "pydantic-settings>=2.2",
+    "typer>=0.12",
+    "httpx>=0.27",
+    "numpy>=1.26",
+    "PyYAML>=6.0",
+    "python-dotenv>=1.0",
+    "aiofiles>=23.2",
+    "rich>=13.7",
+    "tenacity>=8.2",
+]
+
+[project.optional-dependencies]
+pdf = ["pypdf>=4.0"]
+docx = ["python-docx>=1.1"]
+faiss = ["faiss-cpu>=1.8"]
+embeddings = ["sentence-transformers>=2.6", "torch>=2.2"]
+dev = ["pytest>=8.0", "pytest-asyncio>=0.23", "pytest-cov>=5.0", "ruff>=0.3", "mypy>=1.9", "black>=24.0"]
+
+[project.scripts]
+contextloom = "contextloom.cli.main:app"
+
+[project.urls]
+Homepage = "https://github.com/huzjie/contextloom"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+contextloom = ["py.typed"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short -p no:cacheprovider"
+asyncio_mode = "auto"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "UP", "B", "C4", "SIM"]
+ignore = ["E501", "B008"]
+
+[tool.mypy]
+python_version = "3.11"
+ignore_missing_imports = true
+check_untyped_defs = true
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
