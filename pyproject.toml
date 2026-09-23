@@ -39,7 +39,7 @@ pdf = ["pypdf>=4.0"]
 docx = ["python-docx>=1.1"]
 faiss = ["faiss-cpu>=1.8"]
 embeddings = ["sentence-transformers>=2.6", "torch>=2.2"]
-dev = ["pytest>=8.0", "pytest-asyncio>=0.23", "pytest-cov>=5.0", "ruff>=0.3", "mypy>=1.9", "black>=24.0"]
+dev = ["pytest>=8.0", "pytest-asyncio>=1.4.0", "pytest-cov>=5.0", "ruff>=0.3", "mypy>=1.9", "black>=24.0"]
 
 [project.scripts]
 contextloom = "contextloom.cli.main:app"
